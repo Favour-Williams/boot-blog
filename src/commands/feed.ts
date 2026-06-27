@@ -122,6 +122,25 @@ export async function handlerFollowing(
   }
 }
 
+export async function handlerBrowse(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
+  const limitArg = args[0];
+  const limit = limitArg ? parseInt(limitArg, 10) : 2;
+  const { getPostsForUser } = await import("../lib/db/queries/posts");
+
+  const posts = await getPostsForUser(user.id, limit);
+  for (const post of posts) {
+    console.log(`Title: ${post.title}`);
+    console.log(`URL:   ${post.url}`);
+    console.log(`Feed:  ${post.feedName}`);
+    console.log(`Pub:   ${post.publishedAt}`);
+    console.log("------------------------");
+  }
+}
+
 export async function handlerUnfollow(
   cmdName: string,
   user: User,

@@ -1,5 +1,6 @@
 import { fetchFeed } from "../lib/rss";
 import { getNextFeedToFetch, markFeedFetched } from "../lib/db/queries/feeds";
+import { createPost } from "../lib/db/queries/posts";
 
 function parseDuration(durationStr: string): number {
   const regex = /^(\d+)(ms|s|m|h)$/;
@@ -38,14 +39,31 @@ async function scrapeFeeds(): Promise<void> {
 
   try {
     const feedData = await fetchFeed(feed.url);
+    const items = feedData.channel.item || [];
+
+    for (const item of items) {
+      const title = item.title;
+      const link = item.link;
+      const description = item.description;
+      const pubDate = item.pubDate;
+
+      let publishedAt: Date | null = null;
+      if (pubDate) {
+        const parsed = new Date(pubDate);
+        if (!isNaN(parsed.getTime())) {
+          publishedAt = parsed;
+        }
+      }
+
+      try {
+        await createPost(title, link, description, publishedAt, feed.id);
+      } catch (err) {
+        console.error("Error creating post:", err);
+      }
+    }
 
     await markFeedFetched(feed.id);
-
-    const items = feedData.channel.item || [];
-    console.log(`Found ${items.length} posts:`);
-    for (const item of items) {
-      console.log(`  - ${item.title}`);
-    }
+    console.log(`Saved ${items.length} posts for feed ${feed.name}`);
   } catch (error) {
     console.error(`Error fetching feed ${feed.url}:`, error);
   }

@@ -2,7 +2,7 @@
 import { registerCommand, runCommand, CommandsRegistry, CommandHandler } from "./commands/commands";
 import { handlerDeleteAllUsers, handlerLogin, handlerRegister, handlerListUsers } from "./commands/users";
 import {handleURL} from "./commands/aggregate"
-import { addFeed, handlerFeeds, handlerFollow, handlerFollowing, handlerUnfollow } from "./commands/feed";
+import { addFeed, handlerFeeds, handlerFollow, handlerFollowing, handlerUnfollow, handlerBrowse } from "./commands/feed";
 
 
 import {middlewareLoggedIn} from "./middleware/middleware"
@@ -21,6 +21,7 @@ async function main() {
     registerCommand(registry, "follow", middlewareLoggedIn(handlerFollow));
     registerCommand(registry, "following", middlewareLoggedIn(handlerFollowing));
     registerCommand(registry, "unfollow", middlewareLoggedIn(handlerUnfollow));
+    registerCommand(registry, "browse", middlewareLoggedIn(handlerBrowse));
     const commands = process.argv;
     if(commands.length < 3){
         console.error("No command provided. Usage: npm start <command> [args]");
