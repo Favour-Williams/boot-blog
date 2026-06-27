@@ -22,6 +22,13 @@
       "when": 1782046970078,
       "tag": "0002_freezing_justice",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782558845648,
+      "tag": "0003_glorious_sharon_carter",
+      "breakpoints": true
     }
   ]
 }
